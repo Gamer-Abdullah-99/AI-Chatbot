@@ -11,10 +11,12 @@ export async function POST(req: Request) {
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
     const geminiModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    const fullHistory = chatHistory.map((msg: { role: string; content: string }) => ({
-      role: msg.role === "user" ? "user" : "model",
-      parts: [{ text: msg.content }],
-    }));
+    const fullHistory = chatHistory.map(
+      (msg: { role: string; content: string }) => ({
+        role: msg.role === "user" ? "user" : "model",
+        parts: [{ text: msg.content }],
+      })
+    );
 
     fullHistory.push({
       role: "user",
@@ -25,7 +27,9 @@ export async function POST(req: Request) {
       const stream = new ReadableStream({
         async start(controller) {
           try {
-            const resultStream = await geminiModel.generateContentStream({ contents: fullHistory });
+            const resultStream = await geminiModel.generateContentStream({
+              contents: fullHistory,
+            });
 
             for await (const chunk of resultStream.stream) {
               controller.enqueue(chunk.text());
@@ -42,13 +46,18 @@ export async function POST(req: Request) {
         headers: { "Content-Type": "text/plain" },
       });
     } else {
-      const result = await geminiModel.generateContent({ contents: fullHistory });
+      const result = await geminiModel.generateContent({
+        contents: fullHistory,
+      });
       const responseText = result.response.text();
 
       return Response.json({ response: responseText });
     }
   } catch (error) {
     console.error("Error:", error);
-    return Response.json({ error: "Failed to fetch response" }, { status: 500 });
+    return Response.json(
+      { error: "Failed to fetch response" },
+      { status: 500 }
+    );
   }
 }

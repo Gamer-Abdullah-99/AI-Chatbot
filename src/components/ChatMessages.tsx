@@ -1,7 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useRef, useEffect } from "react";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
 
 interface ChatMessagesProps {
-  chat: { role: string; content: string }[];
+  chat: Message[];
 }
 
 export default function ChatMessages({ chat }: ChatMessagesProps) {
@@ -9,27 +14,15 @@ export default function ChatMessages({ chat }: ChatMessagesProps) {
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   }, [chat]);
-
-  const formatMessage = (text: string) => {
-    const codeBlockRegex = /```([\s\S]*?)```/g;
-    return text.split(codeBlockRegex).map((part, index) =>
-      index % 2 === 1 ? (
-        <pre key={index} className="bg-gray-800 text-white p-2 rounded-md overflow-x-auto">
-          <code>{part}</code>
-        </pre>
-      ) : (
-        <span key={index}>{part}</span>
-      )
-    );
-  };
 
   return (
     <div
       ref={chatContainerRef}
-      className="flex-1 w-full max-w-2xl p-4 border bg-white shadow rounded-lg overflow-y-auto"
+      className="flex-1 w-full w-full p-4 border bg-white shadow rounded-lg overflow-y-auto"
     >
       {chat.map((msg, index) => (
         <div
@@ -40,7 +33,7 @@ export default function ChatMessages({ chat }: ChatMessagesProps) {
               : "bg-gray-300 text-black"
           }`}
         >
-          {formatMessage(msg.content)}
+          {msg.content}
         </div>
       ))}
     </div>

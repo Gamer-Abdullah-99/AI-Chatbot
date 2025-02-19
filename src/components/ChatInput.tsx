@@ -8,16 +8,18 @@ interface ChatInputProps {
 export default function ChatInput({ onSendMessage, loading }: ChatInputProps) {
   const [message, setMessage] = useState("");
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
-      onSendMessage(message);
-      setMessage("");
-    }
+    if (!message.trim()) return;
+    onSendMessage(message);
+    setMessage("");
   };
 
   return (
-    <form className="w-full max-w-2xl mt-4 flex items-center gap-2" onSubmit={handleSendMessage}>
+    <form
+      onSubmit={handleSubmit}
+      className="w-full max-w-2xl mt-4 flex items-center gap-2"
+    >
       <input
         type="text"
         value={message}
